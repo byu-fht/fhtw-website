@@ -3,7 +3,7 @@ import MenuBar from "./MenuBar";
 
 const Burger = (props) => {
   const [open, setOpen] = useState(false);
-  const base = "h-1 rounded-lg origin-left transition-all bg-bluey";
+  const base = "h-1 rounded-lg origin-left transition-all";
   // transition: all 0.3s linear;
   return (
     <>
@@ -12,17 +12,21 @@ const Burger = (props) => {
         onClick={() => setOpen(!open)}
       >
         <div
-          className={open ? base + " bg-white rotate-45" : base + " rotate-0"}
+          className={
+            open ? "bg-white rotate-45 " + base : "rotate-0 bg-black " + base
+          }
         />
         <div
           className={
             open
-              ? base + " bg-white translate-x-full opacity-0"
-              : base + " translate-x-0 opacity-100"
+              ? "bg-white translate-x-full opacity-0 " + base
+              : " translate-x-0 opacity-100 bg-black " + base
           }
         />
         <div
-          className={open ? base + " bg-white -rotate-45" : base + " rotate-0"}
+          className={
+            open ? "bg-white -rotate-45 " + base : " rotate-0 bg-black " + base
+          }
         />
       </div>
       <MenuBar

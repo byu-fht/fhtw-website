@@ -1,6 +1,17 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@theme { 
+  --color-default: "#1a202c",
+  --color-black: "#000000"
+  --color-byu: "#002e5d",
+  --color-red: "#990011",
+  --color-lightblue: "#3182ce",
+  --color-yellow: "#ffcd00",
+  --color-bluey: "#182b49",
+}
 
 @layer base {
   body {
@@ -39,6 +50,6 @@
   a {
     @apply underline;
     @apply text-sky-500;
-    @apply hover:text-red;
+    @apply hover:text-red-500;
   }
 }

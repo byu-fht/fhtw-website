@@ -12,7 +12,7 @@ const Menu = ({ prefix, items }) => {
         <>
           <div className="lg:h-12 flex flex-col justify-center mt-2 lg:mt-0 lg:ml-5">
             <button
-              className="text-white text-base lg:text-default"
+              className="text-white text-base lg:text-black"
               type="button"
               aria-haspopup="menu"
               aria-expanded={dropdown ? "true" : "false"}
@@ -30,7 +30,7 @@ const Menu = ({ prefix, items }) => {
       ) : (
         <div className="lg:h-12 lg:ml-5  flex flex-col justify-center">
           <a
-            className="no-underline font-gothic text-white text-base mt-2 lg:mt-0 lg:hover:underline lg:text-default lg:hover:text-sky-500"
+            className="no-underline font-gothic text-white text-base mt-2 lg:mt-0 lg:hover:underline lg:text-black lg:hover:text-sky-500"
             href={prefix + items.url}
           >
             {items.title}
