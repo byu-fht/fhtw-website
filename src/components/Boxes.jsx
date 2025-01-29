@@ -10,7 +10,7 @@ export function ClearBox(props) {
 
 export function RedBanner(props) {
   return (
-    <div className="bg-red">
+    <div className="bg-red-800">
       <div className="text-white text-xl flex justify-center px-5 py-5 lg:px-[75px] md:ml-auto md:mr-auto py-3 max-w-5xl">
         {props.children}
       </div>

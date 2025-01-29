@@ -12,7 +12,7 @@ const Dropdown = ({ submenus, dropdown }) => {
         {submenus.map((submenu, index) => (
           <li key={index} className="list-none py-2 px-1 ml-0">
             <a
-              className="no-underline text-white hover:text-white lg:hover:underline lg:text-default lg:hover:text-sky-500"
+              className="no-underline text-white hover:text-white lg:hover:underline lg:text-black lg:hover:text-sky-500"
               href={submenu.url}
             >
               {submenu.title}
