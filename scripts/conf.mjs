@@ -10,8 +10,12 @@
 //   node scripts/conf.mjs upload        upload local files missing from the manifest
 //   node scripts/conf.mjs upload FILE…  (re)upload specific files, e.g. 2024/x.pdf
 //   node scripts/conf.mjs download      fetch manifest files missing locally
+//   node scripts/conf.mjs backup [DIR]  download missing files, then copy all
+//                                       of them to the Box backup folder
 //
 // Uploading and downloading use wrangler, so run `npx wrangler login` first.
+// The backup folder defaults to Box Drive's "FHTW Website Archive Backup";
+// override with DIR or the FHTW_BACKUP_DIR environment variable.
 
 import { execFileSync } from "node:child_process";
 import {
@@ -24,11 +28,15 @@ import {
 } from "node:fs";
 import { join, relative, extname, dirname } from "node:path";
 import { pathToFileURL } from "node:url";
+import { homedir } from "node:os";
 
 export const BUCKET = "fhtw-conf";
 const ROOT = new URL("..", import.meta.url).pathname;
 const LOCAL = join(ROOT, "public", "conf");
 const MANIFEST = join(ROOT, "conf-manifest.txt");
+const BACKUP_DIR =
+  process.env.FHTW_BACKUP_DIR ??
+  join(homedir(), "Library/CloudStorage/Box-Box/FHTW Website Archive Backup");
 
 const TYPES = {
   ".pdf": "application/pdf",
@@ -124,6 +132,53 @@ function download(key) {
   ]);
 }
 
+function downloadMissing(manifest, local) {
+  const keys = [...manifest].filter((k) => !local.includes(k));
+  keys.forEach((key, i) => {
+    process.stdout.write(`[${i + 1}/${keys.length}] ${key}\n`);
+    download(key);
+  });
+  console.log(`downloaded ${keys.length} file(s)`);
+}
+
+// Copy every archive file to the backup folder. Never deletes from the
+// backup, so it also keeps files later removed from the site.
+function backup(dir) {
+  if (!existsSync(dirname(dir))) {
+    throw new Error(`${dirname(dir)} not found (is Box Drive running?)`);
+  }
+  mkdirSync(join(dir, "conf"), { recursive: true });
+  execFileSync(
+    "rsync",
+    ["-a", "--exclude", ".DS_Store", LOCAL + "/", join(dir, "conf") + "/"],
+    { stdio: "inherit" },
+  );
+  writeFileSync(join(dir, "conf-manifest.txt"), readFileSync(MANIFEST));
+  const commit = execFileSync("git", ["rev-parse", "--short", "HEAD"], {
+    cwd: ROOT,
+  })
+    .toString()
+    .trim();
+  writeFileSync(
+    join(dir, "README.txt"),
+    `Backup of the Family History Technology Workshop archive files
+(papers, slides, audio, video) served at https://fhtw.byu.edu/conf/.
+
+The live copies are in the Cloudflare R2 bucket "${BUCKET}"; this folder is
+an offline backup. conf/ mirrors the bucket; files are never deleted here.
+To refresh it, from the website repo (github.com/byu-fht/fhtw-website):
+
+    npm run conf -- backup
+
+Do this every year after adding that year's archive, and whenever
+files are added or replaced. See the repo README.
+
+Last backup: ${new Date().toISOString().slice(0, 10)} (repo commit ${commit})
+`,
+  );
+  console.log(`backed up to ${dir}`);
+}
+
 function main([cmd, ...args]) {
   const manifest = readManifest();
   const local = localFiles();
@@ -151,15 +206,13 @@ function main([cmd, ...args]) {
     }
     console.log(`uploaded ${n} file(s)`);
   } else if (cmd === "download") {
-    const keys = [...manifest].filter((k) => !local.includes(k));
-    keys.forEach((key, i) => {
-      process.stdout.write(`[${i + 1}/${keys.length}] ${key}\n`);
-      download(key);
-    });
-    console.log(`downloaded ${keys.length} file(s)`);
+    downloadMissing(manifest, local);
+  } else if (cmd === "backup") {
+    downloadMissing(manifest, local);
+    backup(args[0] ?? BACKUP_DIR);
   } else {
     console.log(
-      "usage: node scripts/conf.mjs status | upload [FILE…] | download",
+      "usage: node scripts/conf.mjs status | upload [FILE…] | download | backup [DIR]",
     );
     process.exitCode = 1;
   }

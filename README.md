@@ -57,3 +57,33 @@ To get a local copy of all files (e.g. on a new machine), run
 
 To change the Worker, edit `r2-worker/src/index.js` and run
 `npm run deploy-worker`.
+
+### Backup
+
+An offline copy of every archive file is kept in Box, in the
+**FHTW Website Archive Backup** folder (`conf/` plus a copy of
+`conf-manifest.txt` and a README with the date of the last backup). To
+refresh it, with [Box Drive](https://www.box.com/drive) running:
+
+```sh
+npm run conf -- backup               # or: npm run conf -- backup /other/folder
+```
+
+This downloads any files missing from your local copy, then copies everything
+into the Box folder. It never deletes from the backup, so files later removed
+from the site are kept.
+
+## Yearly maintenance
+
+After each workshop:
+
+1. Collect the abstracts, papers and slides (presenters often link Google
+   Drive files from the program doc; save copies, since those links stop
+   working over time).
+2. Add them under `public/conf/<year>/`, upload with `npm run conf -- upload`,
+   and add `src/pages/archive/<year>.mdx` plus a menu entry in
+   `src/layouts/WideLayout.astro`.
+3. **Back up to Box** with `npm run conf -- backup`. Also do this whenever
+   archive files are added or replaced during the year.
+4. Commit and push `conf-manifest.txt` and the page changes; the Netlify build
+   checks that every `/conf/` link exists in R2.
