@@ -1,7 +1,22 @@
 # Netlify build settings. Values here override those set in the Netlify UI.
 [build]
-  command = "npm run build"
+  command = "npm run build && npm run check-links"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Archive files (papers, slides, audio, video) are stored in Cloudflare R2
+# and served by the fhtw-files Worker (see r2-worker/ and the README).
+# 302 rather than 301 so browsers don't cache the Worker location forever,
+# in case the files move again.
+[[redirects]]
+  from = "/conf/*"
+  to = "https://fhtw-files.zappala.workers.dev/conf/:splat"
+  status = 302
+
+# URLs from the old Flask site, which served the same files at /static/conf/.
+[[redirects]]
+  from = "/static/conf/*"
+  to = "/conf/:splat"
+  status = 301

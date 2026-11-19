@@ -75,43 +75,53 @@ function localFiles(dir = LOCAL) {
   });
 }
 
+// Run a wrangler command, retrying transient Cloudflare API errors.
+function wrangler(args, attempts = 4) {
+  for (let i = 1; ; i++) {
+    try {
+      execFileSync("npx", ["wrangler", ...args], {
+        stdio: ["ignore", "ignore", "pipe"],
+      });
+      return;
+    } catch (err) {
+      if (i >= attempts) {
+        process.stderr.write(err.stderr ?? "");
+        throw new Error(`wrangler ${args.slice(0, 4).join(" ")} failed`);
+      }
+      const wait = 2 ** i;
+      console.error(`  retrying in ${wait}s (attempt ${i} failed)`);
+      execFileSync("sleep", [String(wait)]);
+    }
+  }
+}
+
 function upload(key) {
   const type = TYPES[extname(key).toLowerCase()] ?? "application/octet-stream";
-  execFileSync(
-    "npx",
-    [
-      "wrangler",
-      "r2",
-      "object",
-      "put",
-      `${BUCKET}/${key}`,
-      "--file",
-      join(LOCAL, key),
-      "--content-type",
-      type,
-      "--remote",
-    ],
-    { stdio: ["ignore", "ignore", "inherit"] },
-  );
+  wrangler([
+    "r2",
+    "object",
+    "put",
+    `${BUCKET}/${key}`,
+    "--file",
+    join(LOCAL, key),
+    "--content-type",
+    type,
+    "--remote",
+  ]);
 }
 
 function download(key) {
   const dest = join(LOCAL, key);
   mkdirSync(dirname(dest), { recursive: true });
-  execFileSync(
-    "npx",
-    [
-      "wrangler",
-      "r2",
-      "object",
-      "get",
-      `${BUCKET}/${key}`,
-      "--file",
-      dest,
-      "--remote",
-    ],
-    { stdio: ["ignore", "ignore", "inherit"] },
-  );
+  wrangler([
+    "r2",
+    "object",
+    "get",
+    `${BUCKET}/${key}`,
+    "--file",
+    dest,
+    "--remote",
+  ]);
 }
 
 function main([cmd, ...args]) {
