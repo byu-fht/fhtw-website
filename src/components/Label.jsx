@@ -1,65 +1,60 @@
-export function Presentation(props) {
+// Colored link buttons for archive materials, e.g. <Paper url="/conf/2014/x.pdf" />
+
+function Label({ url, color, children }) {
   return (
     <a
-      className="no-underline rounded-lg bg-byu text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1"
-      href={props.url}
+      className={`no-underline rounded-lg ${color} text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1`}
+      href={url}
     >
-      Presentation
+      {children}
     </a>
   );
 }
 
-export function Paper(props) {
-  return (
-    <a
-      className="no-underline rounded-lg bg-red text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1"
-      href={props.url}
-    >
-      Paper
-    </a>
-  );
-}
+export const Presentation = ({ url }) => (
+  <Label url={url} color="bg-byu">
+    Presentation
+  </Label>
+);
 
-export function Abstract(props) {
-  return (
-    <a
-      className="no-underline rounded-lg bg-sky-600 text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1"
-      href={props.url}
-    >
-      Abstract
-    </a>
-  );
-}
+export const Paper = ({ url }) => (
+  <Label url={url} color="bg-red">
+    Paper
+  </Label>
+);
 
-export function Video(props) {
-  return (
-    <a
-      className="no-underline rounded-lg bg-yellow-600 text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1"
-      href={props.url}
-    >
-      Video
-    </a>
-  );
-}
+export const Abstract = ({ url }) => (
+  <Label url={url} color="bg-sky-600">
+    Abstract
+  </Label>
+);
 
-export function Audio(props) {
-  return (
-    <a
-      className="no-underline rounded-lg bg-green-600 text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1"
-      href={props.url}
-    >
-      Audio
-    </a>
-  );
-}
+export const Video = ({ url }) => (
+  <Label url={url} color="bg-yellow-600">
+    Video
+  </Label>
+);
 
-export function Poster(props) {
-  return (
-    <a
-      className="no-underline rounded-lg bg-orange-400 text-white hover:text-white w-auto text-xs md:text-sm ml-2 px-2 py-1"
-      href={props.url}
-    >
-      Poster
-    </a>
-  );
-}
+export const Audio = ({ url }) => (
+  <Label url={url} color="bg-green-600">
+    Audio
+  </Label>
+);
+
+export const Poster = ({ url }) => (
+  <Label url={url} color="bg-orange-400">
+    Poster
+  </Label>
+);
+
+export const Bio = ({ url }) => (
+  <Label url={url} color="bg-slate-500">
+    Bio
+  </Label>
+);
+
+export const Data = ({ url }) => (
+  <Label url={url} color="bg-teal-700">
+    Data
+  </Label>
+);
