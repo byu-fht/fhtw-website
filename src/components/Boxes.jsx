@@ -1,7 +1,8 @@
 export function ClearBox(props) {
   return (
     <div className="bg-white">
-      <div className="text-default text-xl flex justify-center px-5 py-5 lg:px-[75px] md:ml-auto md:mr-auto py-3 max-w-5xl">
+      {/* pr-16 keeps the logo clear of the floating mobile menu button */}
+      <div className="text-default text-xl flex justify-center pl-5 pr-16 lg:px-[75px] md:ml-auto md:mr-auto py-3 max-w-5xl">
         {props.children}
       </div>
     </div>

@@ -1,6 +1,20 @@
 ---
+import "@fontsource/gothic-a1/400.css";
 import "../assets/base.css";
 import NavBar from "../menu/NavBar.astro";
+
+// Page title and description come from the page's frontmatter (title,
+// description), or are derived for archive pages.
+const SITE = "Family History Technology Workshop";
+const { frontmatter = {} } = Astro.props;
+const year = Astro.url.pathname.match(/^\/archive\/(\d{4})/)?.[1];
+const pageTitle = frontmatter.title ?? (year && `${year} Program`);
+const title = pageTitle ? `${pageTitle} | ${SITE}` : SITE;
+const description =
+  frontmatter.description ??
+  (year
+    ? `Program, papers, abstracts and slides from the ${year} Family History Technology Workshop at Brigham Young University.`
+    : "The Family History Technology Workshop at Brigham Young University brings together researchers, developers and professionals working on technology that makes family history better.");
 
 const items = [
   {
@@ -131,48 +145,24 @@ const items = [
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Arvo:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Gothic+A1&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;0,800;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap"
-      rel="stylesheet"
-    />
-    <meta name="generator" content={Astro.generator} /><title>
-      Family History Technology Workshop
-    </title></head
-  >
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
 
   <body class="mx-0">
     <header>
       <NavBar prefix="" items={items} />
     </header>
 
-    <slot class="font-gothic" />
+    <slot />
 
     <footer>
       <div

@@ -7,8 +7,14 @@ const Burger = (props) => {
   // transition: all 0.3s linear;
   return (
     <>
-      <div
-        className="lg:hidden flex justify-around flex-nowrap flex-col w-7 h-7 fixed top-3 right-5 z-20"
+      <button
+        type="button"
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        className={
+          "lg:hidden flex justify-around flex-nowrap flex-col w-10 h-10 p-2 rounded-md fixed top-2 right-3 z-20 cursor-pointer " +
+          (open ? "" : "bg-white/85 shadow-sm")
+        }
         onClick={() => setOpen(!open)}
       >
         <div
@@ -28,7 +34,7 @@ const Burger = (props) => {
             open ? "bg-white -rotate-45 " + base : " rotate-0 bg-black " + base
           }
         />
-      </div>
+      </button>
       <MenuBar
         prefix={props.prefix}
         items={props.items}
