@@ -23,6 +23,12 @@ export const Paper = ({ url }) => (
   </Label>
 );
 
+export const Report = ({ url }) => (
+  <Label url={url} color="bg-purple-700">
+    Report
+  </Label>
+);
+
 export const Abstract = ({ url }) => (
   <Label url={url} color="bg-sky-600">
     Abstract
