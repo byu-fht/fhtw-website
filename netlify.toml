@@ -38,11 +38,14 @@
 # Security headers for every page.
 # The CSP allows: Astro's inline hydration scripts and inline styles,
 # YouTube embeds, and images from anywhere over HTTPS (archive images
-# redirect to the R2 Worker). Test pages in a browser after changing it.
+# redirect to the R2 Worker), and data: fonts (Vite inlines small font
+# files). Test pages in a browser after changing it. On deploy previews the
+# browser console also reports Netlify's preview toolbar being blocked;
+# that only affects previews.
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; media-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; media-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
     Strict-Transport-Security = "max-age=31536000"
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "SAMEORIGIN"
