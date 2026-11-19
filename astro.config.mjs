@@ -1,15 +1,12 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
-import tailwind from "@astrojs/tailwind";
-
 import mdx from "@astrojs/mdx";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), tailwind(), mdx()],
+  integrations: [react(), mdx()],
   vite: {
-    ssr: {
-      noExternal: ["react-icons"],
-    },
+    plugins: [tailwindcss()],
   },
 });
