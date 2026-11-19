@@ -6,6 +6,20 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Netlify uses the FIRST matching redirect, so specific rules must come
+# before the general /conf/* rule below.
+
+# 2023 files renamed when they were relabeled from Paper to Report.
+[[redirects]]
+  from = "/conf/2023/price-richins-1910-paper-fhtw2023.pdf"
+  to = "/conf/2023/price-richins-1910-report-fhtw2023.pdf"
+  status = 301
+
+[[redirects]]
+  from = "/conf/2023/tanner-gedcom-paper-fhtw2023.pdf"
+  to = "/conf/2023/tanner-gedcom-report-fhtw2023.pdf"
+  status = 301
+
 # Archive files (papers, slides, audio, video) are stored in Cloudflare R2
 # and served by the fhtw-files Worker (see r2-worker/ and the README).
 # 302 rather than 301 so browsers don't cache the Worker location forever,
@@ -20,16 +34,3 @@
   from = "/static/conf/*"
   to = "/conf/:splat"
   status = 301
-
-# 2023 files renamed when they were relabeled from Paper to Report.
-[[redirects]]
-  from = "/conf/2023/price-richins-1910-paper-fhtw2023.pdf"
-  to = "/conf/2023/price-richins-1910-report-fhtw2023.pdf"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/conf/2023/tanner-gedcom-paper-fhtw2023.pdf"
-  to = "/conf/2023/tanner-gedcom-report-fhtw2023.pdf"
-  status = 301
-  force = true
