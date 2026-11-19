@@ -1,0 +1,14 @@
+// Cloudflare Worker that serves the archive files stored in R2.
+// Deploy with:  npx wrangler deploy --config r2-worker/wrangler.jsonc
+{
+  "name": "fhtw-files",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "r2_buckets": [
+    {
+      "binding": "CONF",
+      "bucket_name": "fhtw-conf"
+    }
+  ]
+}
