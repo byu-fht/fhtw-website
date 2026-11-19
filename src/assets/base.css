@@ -1,16 +1,15 @@
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --color-default: #1a202c;
+  --color-byu: #002e5d;
+  --color-red: #990011;
+  --color-lightblue: #3182ce;
+  --color-yellow: #ffcd00;
+  --color-bluey: #182b49;
 
-@theme { 
-  --color-default: "#1a202c",
-  --color-black: "#000000"
-  --color-byu: "#002e5d",
-  --color-red: "#990011",
-  --color-lightblue: "#3182ce",
-  --color-yellow: "#ffcd00",
-  --color-bluey: "#182b49",
+  --font-arvo: "Arvo", sans-serif;
+  --font-gothic: "Gothic A1", sans-serif;
 }
 
 @layer base {
