@@ -9,6 +9,7 @@
 //   node scripts/conf.mjs status        local files not yet uploaded, and vice versa
 //   node scripts/conf.mjs upload        upload local files missing from the manifest
 //   node scripts/conf.mjs upload FILE…  (re)upload specific files, e.g. 2024/x.pdf
+//   node scripts/conf.mjs delete FILE…  remove files from R2 and the manifest
 //   node scripts/conf.mjs download      fetch manifest files missing locally
 //   node scripts/conf.mjs backup [DIR]  download missing files, then copy all
 //                                       of them to the Box backup folder
@@ -205,6 +206,18 @@ function main([cmd, ...args]) {
       writeManifest(manifest);
     }
     console.log(`uploaded ${n} file(s)`);
+  } else if (cmd === "delete") {
+    for (const key of args) {
+      if (!manifest.has(key)) {
+        console.error(`not in manifest: ${key}`);
+        process.exitCode = 1;
+        continue;
+      }
+      wrangler(["r2", "object", "delete", `${BUCKET}/${key}`, "--remote"]);
+      manifest.delete(key);
+      writeManifest(manifest);
+      console.log(`deleted ${key}`);
+    }
   } else if (cmd === "download") {
     downloadMissing(manifest, local);
   } else if (cmd === "backup") {
@@ -212,7 +225,7 @@ function main([cmd, ...args]) {
     backup(args[0] ?? BACKUP_DIR);
   } else {
     console.log(
-      "usage: node scripts/conf.mjs status | upload [FILE…] | download | backup [DIR]",
+      "usage: node scripts/conf.mjs status | upload [FILE…] | delete FILE… | download | backup [DIR]",
     );
     process.exitCode = 1;
   }
