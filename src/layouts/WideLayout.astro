@@ -15,6 +15,8 @@ const description =
   (year
     ? `Program, papers, abstracts and slides from the ${year} Family History Technology Workshop at Brigham Young University.`
     : "The Family History Technology Workshop at Brigham Young University brings together researchers, developers and professionals working on technology that makes family history better.");
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL("/images/og-image.png", Astro.site);
 
 const items = [
   {
@@ -147,6 +149,20 @@ const items = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Link previews (Slack, email, social media) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE} />
+    <meta property="og:title" content={pageTitle ?? SITE} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Family History Technology Workshop logo" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
