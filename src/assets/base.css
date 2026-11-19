@@ -8,7 +8,6 @@
   --color-yellow: #ffcd00;
   --color-bluey: #182b49;
 
-  --font-arvo: "Arvo", sans-serif;
   --font-gothic: "Gothic A1", sans-serif;
 }
 
@@ -48,7 +47,7 @@
   }
   a {
     @apply underline;
-    @apply text-sky-500;
-    @apply hover:text-red-500;
+    @apply text-sky-700;
+    @apply hover:text-red-700;
   }
 }

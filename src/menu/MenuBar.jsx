@@ -13,7 +13,7 @@ const MenuBar = ({ prefix, items, open }) => {
   return (
     <div className={base}>
       <div className="flex lg:flex-col lg:justify-center">
-        <img className="pr-5 h-10" src="/images/fhtw-small-logo.svg" />
+        <img className="pr-5 h-10" src="/images/fhtw-small-logo.svg" alt="FHTW" />
       </div>
       {items.map((menu, index) => {
         return <Menu prefix={prefix} items={menu} key={index} />;
