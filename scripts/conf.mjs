@@ -9,18 +9,20 @@
 //   node scripts/conf.mjs status        local files not yet uploaded, and vice versa
 //   node scripts/conf.mjs upload        upload local files missing from the manifest
 //   node scripts/conf.mjs upload FILE…  (re)upload specific files, e.g. 2024/x.pdf
+//   node scripts/conf.mjs download      fetch manifest files missing locally
 //
-// Uploading uses wrangler, so run `npx wrangler login` once first.
+// Uploading and downloading use wrangler, so run `npx wrangler login` first.
 
 import { execFileSync } from "node:child_process";
 import {
+  mkdirSync,
   readFileSync,
   writeFileSync,
   readdirSync,
   statSync,
   existsSync,
 } from "node:fs";
-import { join, relative, extname } from "node:path";
+import { join, relative, extname, dirname } from "node:path";
 import { pathToFileURL } from "node:url";
 
 export const BUCKET = "fhtw-conf";
@@ -93,6 +95,25 @@ function upload(key) {
   );
 }
 
+function download(key) {
+  const dest = join(LOCAL, key);
+  mkdirSync(dirname(dest), { recursive: true });
+  execFileSync(
+    "npx",
+    [
+      "wrangler",
+      "r2",
+      "object",
+      "get",
+      `${BUCKET}/${key}`,
+      "--file",
+      dest,
+      "--remote",
+    ],
+    { stdio: ["ignore", "ignore", "inherit"] },
+  );
+}
+
 function main([cmd, ...args]) {
   const manifest = readManifest();
   const local = localFiles();
@@ -119,8 +140,17 @@ function main([cmd, ...args]) {
       writeManifest(manifest);
     }
     console.log(`uploaded ${n} file(s)`);
+  } else if (cmd === "download") {
+    const keys = [...manifest].filter((k) => !local.includes(k));
+    keys.forEach((key, i) => {
+      process.stdout.write(`[${i + 1}/${keys.length}] ${key}\n`);
+      download(key);
+    });
+    console.log(`downloaded ${keys.length} file(s)`);
   } else {
-    console.log("usage: node scripts/conf.mjs status | upload [FILE…]");
+    console.log(
+      "usage: node scripts/conf.mjs status | upload [FILE…] | download",
+    );
     process.exitCode = 1;
   }
 }

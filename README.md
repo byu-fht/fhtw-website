@@ -1,54 +1,59 @@
-# Astro Starter Kit: Basics
+# Family History Technology Workshop website
+
+Source for [fhtw.byu.edu](https://fhtw.byu.edu), built with
+[Astro](https://astro.build), MDX, React and Tailwind CSS.
+
+## Development
+
+Requires Node 24 (see `.nvmrc`; with nvm, run `nvm use`).
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+npm run dev        # local server at http://localhost:4321
+npm run build      # build to dist/
+npm run check-links
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+Pages are in `src/pages/`; past programs are `src/pages/archive/<year>.mdx`.
+The Archive menu is defined in `src/layouts/WideLayout.astro`.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Deployment
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+Netlify builds and deploys every push to `main`. Build settings and redirects
+are in `netlify.toml`. The build runs `check-links`, so a broken `/conf/` link
+fails the deploy instead of reaching the live site.
 
-## 🚀 Project Structure
+The DNS record for `fhtw.byu.edu` (a CNAME to Netlify) is managed by BYU IT.
 
-Inside of your Astro project, you'll see the following folders and files:
+## Archive files (papers, slides, audio, video)
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+Workshop materials are **not stored in git**. They live in the Cloudflare R2
+bucket `fhtw-conf` and are served by a small Cloudflare Worker (`r2-worker/`).
+Netlify redirects `/conf/*` to the Worker, so pages link to files as
+`/conf/<year>/<file>`. The old site's `/static/conf/*` URLs redirect there too.
+
+- `conf-manifest.txt` (committed) lists every file in the bucket.
+- `public/conf/` is a local, git-ignored copy used by `npm run dev`.
+
+Name files `lastname-keyword-{abstract,paper,presentation}-fhtw<year>.pdf`
+and link them with the label components in `src/components/Label.jsx`:
+
+```mdx
+- _Talk Title_, Author Name<Paper url="/conf/2027/name-keyword-paper-fhtw2027.pdf" />
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+To add files:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```sh
+npx wrangler login               # once
+cp talk.pdf public/conf/2027/name-keyword-paper-fhtw2027.pdf
+npm run conf -- status           # shows local files not yet uploaded
+npm run conf -- upload           # uploads them and updates conf-manifest.txt
+git add conf-manifest.txt src/pages/archive/2027.mdx && git commit
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+To get a local copy of all files (e.g. on a new machine), run
+`npm run conf -- download`.
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+To change the Worker, edit `r2-worker/src/index.js` and run
+`npm run deploy-worker`.
