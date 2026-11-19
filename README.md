@@ -25,6 +25,15 @@ fails the deploy instead of reaching the live site.
 
 The DNS record for `fhtw.byu.edu` (a CNAME to Netlify) is managed by BYU IT.
 
+`netlify.toml` also sets security headers, including a Content-Security-Policy.
+It allows YouTube embeds; to embed anything else (e.g. Vimeo, Google Slides),
+add its domain to `frame-src` there, or the embed will be blocked.
+
+Page titles and descriptions (for search results and link previews) come from
+each page's frontmatter (`title:`, `description:`); archive pages get them
+automatically. `public/images/og-image.png` is the image shown when links to
+the site are shared.
+
 ## Archive files (papers, slides, audio, video)
 
 Workshop materials are **not stored in git**. They live in the Cloudflare R2
