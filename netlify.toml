@@ -1,0 +1,60 @@
+# Netlify build settings. Values here override those set in the Netlify UI.
+[build]
+  command = "npm run build && npm run check-links"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Netlify uses the FIRST matching redirect, so specific rules must come
+# before the general /conf/* rule below.
+
+# 2023 files renamed when they were relabeled from Paper to Report.
+[[redirects]]
+  from = "/conf/2023/price-richins-1910-paper-fhtw2023.pdf"
+  to = "/conf/2023/price-richins-1910-report-fhtw2023.pdf"
+  status = 301
+
+[[redirects]]
+  from = "/conf/2023/tanner-gedcom-paper-fhtw2023.pdf"
+  to = "/conf/2023/tanner-gedcom-report-fhtw2023.pdf"
+  status = 301
+
+# Archive files (papers, slides, audio, video) are stored in Cloudflare R2
+# and served by the fhtw-files Worker (see r2-worker/ and the README).
+# 302 rather than 301 so browsers don't cache the Worker location forever,
+# in case the files move again.
+[[redirects]]
+  from = "/conf/*"
+  to = "https://fhtw-files.zappala.workers.dev/conf/:splat"
+  status = 302
+
+# URLs from the old Flask site, which served the same files at /static/conf/.
+[[redirects]]
+  from = "/static/conf/*"
+  to = "/conf/:splat"
+  status = 301
+
+# Security headers for every page.
+# The CSP allows: Astro's inline hydration scripts and inline styles,
+# YouTube embeds, and images from anywhere over HTTPS (archive images
+# redirect to the R2 Worker), and data: fonts (Vite inlines small font
+# files). Test pages in a browser after changing it. On deploy previews the
+# browser console also reports Netlify's preview toolbar being blocked;
+# that only affects previews.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; media-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    Strict-Transport-Security = "max-age=31536000"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+# Astro's built assets have content hashes in their names, so they never
+# change and can be cached for a year.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
